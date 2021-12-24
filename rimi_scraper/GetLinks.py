@@ -60,6 +60,7 @@ product_category_links = [
 
 #------------------------------------------------------------PRODUCT CATEGORY SCRAPE FUNCTION---------------------------------------------------
 
+#the function retrievies all product links from specified directories on rimi.lv website
 def product_link_procedure(link_list, header):
 
     #initializing HTML session

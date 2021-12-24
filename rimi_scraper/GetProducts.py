@@ -61,6 +61,7 @@ values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 #-------------------------------------------------PRODUCT DETAIL FUNCTIONS---------------------------------------------
 
+#the function parses JavaScipt objects, tries to return it as JSON if it is not corrupted and get to HTML within it
 def GetProductHtml(html_doc):
     
     script_text = html_doc.find('div.cart-layout__main', first=True).find('script')[1].text
@@ -81,6 +82,7 @@ def GetProductHtml(html_doc):
         except:
             return None
 
+#parses the HTML component from JavaScript object and returns product information
 def GetProductInfo(html_doc):
 
     try:
@@ -95,6 +97,7 @@ def GetProductInfo(html_doc):
     except:
         return None
 
+#parses the HTML returned by the rendered error handler
 def GetProductInfoRendered(html_doc):
 
     try:
