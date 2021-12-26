@@ -1,4 +1,4 @@
-#---------------------------------------------------LIBRARIES------------------------------------------------
+#-------------------------------------------  --------LIBRARIES----------------------------------------------
 
 import pandas as pd
 import time
@@ -229,43 +229,45 @@ async def product_details(url, header, snapshot_date):
   
     try:
         r = await s.get(url, headers=header)
+        html_doc = r.html
     except Exception as e:
         print(e)
-        r = None
+        html_doc = None
 
     #product information variables
     product_code = url.split('/')[-1]
-    product_category, product_subcategory, product_type = GetProductCategories(r.html)
-    product_name = GetProductName(r.html)
+    product_category, product_subcategory, product_type = GetProductCategories(html_doc)
+    product_name = GetProductName(html_doc)
 
     #variables for price per item
-    price_per_item = GetPricePerItem(r.html)
-    item = GetItem(r.html)
+    price_per_item = GetPricePerItem(html_doc)
+    item = GetItem(html_doc)
 
     #discount price check
-    old_price = GetOldPrice(r.html)
+    old_price = GetOldPrice(html_doc)
     is_discounted = 1 if old_price is not None else 0
 
     #discount percentage
     discount_pct = GetDiscount(price_per_item, old_price, is_discounted)
     
     #discount period 
-    discount_start, discount_end = GetDiscountPeriods(r.html)
+    discount_start, discount_end = GetDiscountPeriods(html_doc)
 
     #variables for price per unit
-    price_per_unit, unit = GetPricePerUnit(r.html)
+    price_per_unit, unit = GetPricePerUnit(html_doc)
     
     #variable for minimum amount
-    minimum_amount = GetMinimumAmount(r.html)
+    minimum_amount = GetMinimumAmount(html_doc)
 
     #extracting variables for product additional information from JavaScript or if parsing failed - trying to render it and re-scrape as a part of the same async session
-    additional_info = GetProductInfo(r.html)
+    additional_info = GetProductInfo(html_doc)
     
     if additional_info == None:
         try:
             r_rendered = await s.get(url, headers=header)
             await r_rendered.html.arender(sleep=5, timeout=20)
-            additional_info = GetProductInfoRendered(r_rendered.html)
+            html_doc_rendered = r_rendered.html
+            additional_info = GetProductInfoRendered(html_doc_rendered)
         except:
             additional_info = None
 

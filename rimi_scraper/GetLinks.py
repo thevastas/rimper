@@ -86,12 +86,13 @@ def product_link_procedure(link_list, header):
             #extracting content from the url
             try:
                 scrape_content = non_assync_session.get(url, headers=header)
+                html_doc = scrape_content.html
             except Exception as e:
                 print(e)
                 pass
 
             #accesing product information on Rimi website and checking how many products there are
-            product_information = scrape_content.html.find('li.product-grid__item')
+            product_information = html_doc.find('li.product-grid__item')
             list_length = len(product_information)
 
             #updating variables for the control flow of the process with page number and length of product list for the while loop
