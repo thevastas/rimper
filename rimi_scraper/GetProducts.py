@@ -231,7 +231,7 @@ async def product_details(url, header, snapshot_date):
         r = await s.get(url, headers=header)
     except Exception as e:
         print(e)
-        pass
+        r = None
 
     #product information variables
     product_code = url.split('/')[-1]
