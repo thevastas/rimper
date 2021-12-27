@@ -1,6 +1,7 @@
 from GetLinks import Main as GetLinksMain
 from GetProducts import Main as GetProductsMain
 from HandleErrors import Main as HandleErrorsMain
+from MailSend import Main as MailSendMain
 from time import sleep
 import sys
 
@@ -15,6 +16,10 @@ def Main():
     sleep(5 * 60)
 
     HandleErrorsMain()
+
+    sleep(10)
+
+    MailSendMain()
 
     sys.exit(0)
 

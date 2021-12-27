@@ -127,3 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+rimi_scraper/MailSend.py
