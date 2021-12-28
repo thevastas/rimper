@@ -34,3 +34,5 @@ def Main():
             pass
 
     f.close()
+    cursor.close()
+    db_conn.close()
