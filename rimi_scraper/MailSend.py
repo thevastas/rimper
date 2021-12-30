@@ -12,27 +12,40 @@ cursor = db_conn.cursor()
 
 def Main():
 
-    df = pd.read_sql('set nocount on; exec e_rimi.last_import_check', db_conn)
-    message = f'{df.to_html()}'
+    #importing data to be sent as emails
+    import_check = pd.read_sql('set nocount on; exec e_rimi.last_import_check', db_conn)
+    quality_check = pd.read_sql('set nocount on; exec e_rimi.quality_check', db_conn).round(2)
 
+    #reading login credentials
     f = open("credentials.txt", encoding = 'utf-8')
     contents = f.read().split(', ')
     login = contents[0]
     password = contents[1]
 
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(login, password)
-        try:
-            msg = EmailMessage()
-            msg.set_content('The report was empty. Please check!')
-            msg.add_alternative(message, subtype='html')
-            msg['Subject'] = f'RIMI data extraction report for {datetime.datetime.now().date()}'
-            msg['From'] = 'glebs.suvalovs@gmail.com'
-            msg['To'] = 'gleb.shuvalov@gmail.com'
-            smtp.send_message(msg)
-        except:
-            pass
+    #formatting the data and message tittles
+    data_list = [import_check.to_html(), quality_check[:7].T.to_html()]
+    message_titles = [f'RIMI data import report for {datetime.datetime.now().date()}', f'RIMI data quality report for {datetime.datetime.now().date()}']
 
+    #sending the messages
+    for d, t in zip(data_list, message_titles):
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(login, password)
+
+            try:
+                msg = EmailMessage()
+                msg.set_content('The report was empty. Please check!')
+                msg.add_alternative(f'{d}', subtype='html')
+                msg['Subject'] = t
+                msg['From'] = 'glebs.suvalovs@gmail.com'
+                msg['To'] = 'gleb.shuvalov@gmail.com'
+                smtp.send_message(msg)
+                
+            except Exception as e:
+                print(e)
+                pass
+
+    #closing all connections
     f.close()
     cursor.close()
     db_conn.close()
