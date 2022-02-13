@@ -9,11 +9,11 @@ def Main():
 
     GetLinksMain()
 
-    sleep(5 * 60)
+    sleep(2 * 60)
 
     GetProductsMain()
 
-    sleep(5 * 60)
+    sleep(2 * 60)
 
     HandleErrorsMain()
 

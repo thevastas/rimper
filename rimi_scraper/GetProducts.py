@@ -352,7 +352,7 @@ def Main():
     product_links = pd.read_sql(select_all_links, db_conn)
     url_list = product_links['product_link'].values.tolist()
 
-    product_detail_procedure(url_list, header, snapshot_date, stop=30, step=30, sql_cursor=cursor, sql_conn=db_conn)
+    product_detail_procedure(url_list, header, snapshot_date, stop=35, step=35, sql_cursor=cursor, sql_conn=db_conn)
 
     cursor.close()
     db_conn.close()
