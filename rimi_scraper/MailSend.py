@@ -4,10 +4,12 @@ import pandas as pd
 import datetime
 from email.message import EmailMessage
 
-db_conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
-                      'Server=DESKTOP-LP9CHI3;'
-                      'Database=rimi_data;'
-                      'Trusted_Connection=yes;')
+server = '127.0.0.1:3306'
+database = 'dbschema'
+username = 'rimiuser'
+password = '11pienas'
+
+db_conn = pyodbc.connect('DRIVER={MySQL ODBC 8.0 ANSI Driver};Trusted_Connection=yes;SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 cursor = db_conn.cursor()
 
 def Main():

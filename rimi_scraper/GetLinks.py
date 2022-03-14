@@ -6,23 +6,25 @@ from requests_html import HTMLSession
 
 #--------------------------------------------------SQL CONNECTIONS-------------------------------------------
 
-db_conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
-                      'Server=DESKTOP-LP9CHI3;'
-                      'Database=rimi_data;'
-                      'Trusted_Connection=yes;')
-cursor = db_conn.cursor()
 
+server = '127.0.0.1:3306'
+database = 'dbschema'
+username = 'rimiuser'
+password = '11pienas'
+
+db_conn = pyodbc.connect('DRIVER={MySQL ODBC 8.0 ANSI Driver};Trusted_Connection=yes;SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+cursor = db_conn.cursor()
 #--------------------------------------------------SQL QUERIES------------------------------------------------
 
 link_drop_query = """
 
-drop table if exists rimi_data.e_rimi.product_links;
+drop table if exists dbschema.product_links;
 
 """
 
 link_table_create = """
 
-create table rimi_data.e_rimi.product_links (
+create table dbschema.product_links (
 
     product_category varchar(max),
     product_link varchar(max),
@@ -33,7 +35,7 @@ create table rimi_data.e_rimi.product_links (
 
 link_insert_query = """
 
-insert into rimi_data.e_rimi.product_links ( product_category, product_link, scrape_timestamp )
+insert into dbschema.product_links ( product_category, product_link, scrape_timestamp )
 values (?, ?, ?);
 
 """
@@ -41,21 +43,17 @@ values (?, ?, ?);
 #----------------------------------------------------------PRODUCT CATEGORY LINK LISTS----------------------------------
 
 product_category_links = [
-    'https://www.rimi.lv/e-veikals/en/products/fruit-and-vegetables/c/SH-2',
-    'https://www.rimi.lv/e-veikals/en/products/vegan-and-vegetarian-/c/SH-16',
-    'https://www.rimi.lv/e-veikals/en/products/meat-fish-and-culinary/c/SH-6',
-    'https://www.rimi.lv/e-veikals/en/products/dairy-and-eggs/c/SH-11',
-    'https://www.rimi.lv/e-veikals/en/products/bread-and-pastries/c/SH-7',
-    'https://www.rimi.lv/e-veikals/en/products/frozen-food/c/SH-12',
-    'https://www.rimi.lv/e-veikals/en/products/food-cupboard/c/SH-4',
-    'https://www.rimi.lv/e-veikals/en/products/sweets-and-snacks/c/SH-13',
-    'https://www.rimi.lv/e-veikals/en/products/drinks/c/SH-5',
-    'https://www.rimi.lv/e-veikals/en/products/alcoholic-beverages/c/SH-1',
-    'https://www.rimi.lv/e-veikals/en/products/beauty-and-hygiene/c/SH-14',
-    'https://www.rimi.lv/e-veikals/en/products/babies-and-children/c/SH-15',
-    'https://www.rimi.lv/e-veikals/en/products/detergents-and-cleaning-supplies/c/SH-10',
-    'https://www.rimi.lv/e-veikals/en/products/pets/c/SH-8',
-    'https://www.rimi.lv/e-veikals/en/products/house-garden-and-leisure/c/SH-3'
+'https://www.rimi.lt/e-parduotuve/en/products/fruits-vegetables-and-flowers/c/SH-15',
+'https://www.rimi.lt/e-parduotuve/en/products/-vikis-farm-store/c/SH-18',
+'https://www.rimi.lt/e-parduotuve/en/products/vegan-and-vegetarian/c/SH-77',
+'https://www.rimi.lt/e-parduotuve/en/products/dairy-products-eggs-cheese/c/SH-11',
+'https://www.rimi.lt/e-parduotuve/en/products/bread-products-and-confectionery/c/SH-3',
+'https://www.rimi.lt/e-parduotuve/en/products/meat-fish-and-ready-to-eat-food/c/SH-9',
+'https://www.rimi.lt/e-parduotuve/en/products/frozen-foods/c/SH-13',
+'https://www.rimi.lt/e-parduotuve/en/products/groceries/c/SH-2',
+'https://www.rimi.lt/e-parduotuve/en/products/sweets-and-snacks/c/SH-23',
+'https://www.rimi.lt/e-parduotuve/en/products/baby-and-children-goods/c/SH-7',
+'https://www.rimi.lt/e-parduotuve/en/products/drinks/c/SH-4'
 ]
 
 #------------------------------------------------------------PRODUCT CATEGORY SCRAPE FUNCTION---------------------------------------------------
@@ -108,7 +106,7 @@ def product_link_procedure(link_list, header):
                     for item in result:
                         result = item.find('a')
                         for item in result:
-                            product_link = 'https://www.rimi.lv'+item.attrs['href']
+                            product_link = 'https://www.rimi.lt'+item.attrs['href']
 
                             #SQL server inserts
                             try:
@@ -134,12 +132,12 @@ def Main():
     header = {'User-Agent': 'G. Suvalovs (glebs.suvalovs@gmail.com)'}
 
     #deleting the old version of the link table on SQL server
-    cursor.execute(link_drop_query)
-    db_conn.commit()
-
-    #creating the table again on SQL server
-    cursor.execute(link_table_create)
-    db_conn.commit()
+    # cursor.execute(link_drop_query)
+    # db_conn.commit()
+    #
+    # #creating the table again on SQL server
+    # cursor.execute(link_table_create)
+    # db_conn.commit()
 
     product_link_procedure(product_category_links, header)
 

@@ -2,10 +2,12 @@ from GetProducts import *
 
 #--------------------------------------------------SQL CONNECTIONS-------------------------------------------
 
-db_conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
-                      'Server=DESKTOP-LP9CHI3;'
-                      'Database=rimi_data;'
-                      'Trusted_Connection=yes;')
+server = '127.0.0.1:3306'
+database = 'dbschema'
+username = 'rimiuser'
+password = '11pienas'
+
+db_conn = pyodbc.connect('DRIVER={MySQL ODBC 8.0 ANSI Driver};Trusted_Connection=yes;SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 cursor = db_conn.cursor()
 
 #--------------------------------------------------SQL QUERIES------------------------------------------------
@@ -14,7 +16,7 @@ empty_link_selector = """
 
 declare @today date
 set @today = ( select format( getdate(), 'yyyy-MM-dd' ) )
-select product_link from rimi_data.e_rimi.product_data where snapshot_date = @today and origin_country is null
+select product_link from rimi_data.product_data where snapshot_date = @today and origin_country is null
 order by extract_timestamp asc;
 
 """
@@ -23,7 +25,7 @@ empty_link_truncator = """
 
 declare @today date
 set @today = ( select format( getdate(), 'yyyy-MM-dd' ) )
-delete from rimi_data.e_rimi.product_data where snapshot_date = @today and origin_country is null;
+delete from rimi_data.product_data where snapshot_date = @today and origin_country is null;
 
 """
 

@@ -13,23 +13,25 @@ s = AsyncHTMLSession()
 
 #--------------------------------------------------SQL CONNECTIONS-------------------------------------------
 
-db_conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
-                      'Server=DESKTOP-LP9CHI3;'
-                      'Database=rimi_data;'
-                      'Trusted_Connection=yes;')
+server = '127.0.0.1:3306'
+database = 'dbschema'
+username = 'rimiuser'
+password = '11pienas'
+
+db_conn = pyodbc.connect('DRIVER={MySQL ODBC 8.0 ANSI Driver};Trusted_Connection=yes;SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 cursor = db_conn.cursor()
 
 #--------------------------------------------------SQL QUERIES-----------------------------------------------
 
 select_all_links = """
 
-select product_link from rimi_data.e_rimi.product_links order by scrape_timestamp asc
+select product_link from product_links order by scrape_timestamp asc
 
 """
 
 product_insert_query = """
 
-insert into rimi_data.e_rimi.product_data (
+insert into product_data (
     snapshot_date
     ,product_code
     ,product_name
